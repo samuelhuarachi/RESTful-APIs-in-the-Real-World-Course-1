@@ -21,5 +21,8 @@ $data = array(
 $request = $client->post('/api/programmers', null, json_encode($data));
 $response = $request->send();
 
+$request = $client->get("/api/programmers/".$nickname);
+$response = $request->send();
+
 echo $response;
 echo "\n\n";
