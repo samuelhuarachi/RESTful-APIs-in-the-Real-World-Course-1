@@ -15,6 +15,7 @@ class ProgrammerController extends BaseController
     protected function addRoutes(ControllerCollection $controllers)
     {
         $controllers->post('/api/programmers', array($this, 'newAction'));
+        $controllers->get("/api/programmers", array($this, "listAction"));
         $controllers->get("/api/programmers/{nickname}", array($this, "showAction"))
                     ->bind("api_programmers_show");
     }
@@ -50,17 +51,39 @@ class ProgrammerController extends BaseController
             $this->throw404("Oh no! This programmer has deserted! We will send a search party");
         }
 
-        $data = [
-            "nickname"       => $programmer->nickname,
-            "avatarNumber"   => $programmer->avatarNumber,
-            "powerLevel"     => $programmer->powerLevel,
-            "tagLine"        => $programmer->tagLine,
-        ];
+        $data = $this->serializeProgrammer($programmer);
 
         $response = new Response(json_encode($data), 200);
         $response->headers->set("Content-Type", "application/json");
 
         return $response;
+    }
+
+    public function listAction()
+    {
+        $programmers = $this->getProgrammerRepository()
+            ->findAll();
+
+        $data = ["programmers" => []];
+
+        foreach ($programmers as $programmer) {
+            $data["programmers"][] = $this->serializeProgrammer($programmer);
+        }
+
+        $response = new Response(json_encode($data), 200);
+        $response->headers->set("Content-Type", "application/json");
+
+        return $response;
+    }
+
+    private function serializeProgrammer(Programmer $programmer)
+    {
+        return [
+            "nickname"       => $programmer->nickname,
+            "avatarNumber"   => $programmer->avatarNumber,
+            "powerLevel"     => $programmer->powerLevel,
+            "tagLine"        => $programmer->tagLine,
+        ];
     }
 
 }

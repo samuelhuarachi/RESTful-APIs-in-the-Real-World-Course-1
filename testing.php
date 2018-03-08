@@ -25,5 +25,9 @@ $url = $response->getHeader("Location");
 $request = $client->get($url);
 $response = $request->send();
 
+$request = $client->get("/api/programmers");
+$response = $request->send();
+
+
 echo $response;
 echo "\n\n";
