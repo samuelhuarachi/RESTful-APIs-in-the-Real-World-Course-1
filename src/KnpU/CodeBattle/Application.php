@@ -3,6 +3,7 @@
 namespace KnpU\CodeBattle;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use KnpU\CodeBattle\Api\ApiProblemException;
 use KnpU\CodeBattle\Battle\PowerManager;
 use KnpU\CodeBattle\Repository\BattleRepository;
 use KnpU\CodeBattle\Repository\ProjectRepository;
@@ -20,6 +21,7 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\MonologServiceProvider;
 use Silex\Provider\TranslationServiceProvider;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Finder\Finder;
 use KnpU\CodeBattle\DataFixtures\FixturesManager;
@@ -286,6 +288,19 @@ class Application extends SilexApplication
 
     private function configureListeners()
     {
-        // todo
+        $this->error(function(\Exception $e, $statusCode) {
+            if (!$e instanceof ApiProblemException) {
+                return;
+            }
+
+            $apiProblem = $e->getApiProblem();
+            $response = new JsonResponse(
+                $apiProblem->toArray(),
+                $apiProblem->getStatusCode()
+            );
+            $response->headers->set('Content-Type', 'application/problem+json');
+
+            return $response;
+        });
     }
 } 
