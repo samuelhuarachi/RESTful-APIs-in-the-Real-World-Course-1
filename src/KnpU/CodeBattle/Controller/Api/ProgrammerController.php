@@ -23,15 +23,9 @@ class ProgrammerController extends BaseController
 
     public function newAction(Request $request)
     {
-        $data = json_decode($request->getContent(), true);
-
         $programmer = new Programmer();
-        $programmer->nickname = $data["nickname"];
-        $programmer->avatarNumber = $data["avatarNumber"];
-        $programmer->tagLine = $data["tagLine"];
-        $programmer->userId = $this->findUserByUsername("weaverryan")->id;
 
-        $this->save($programmer);
+        $this->handleRequest($request, $programmer);
 
         $url = $this->generateUrl("api_programmers_show", [
             "nickname" => $programmer->nickname,
@@ -56,14 +50,7 @@ class ProgrammerController extends BaseController
             $this->throw404("Oh no! This programmer has deserted! We will send a search party");
         }
 
-        $data = json_decode($request->getContent(), true);
-
-        $programmer->nickname = $data["nickname"];
-        $programmer->avatarNumber = $data["avatarNumber"];
-        $programmer->tagLine = $data["tagLine"];
-        $programmer->userId = $this->findUserByUsername("weaverryan")->id;
-
-        $this->save($programmer);
+        $this->handleRequest($request, $programmer);
 
         $data = $this->serializeProgrammer($programmer);
 
@@ -112,6 +99,25 @@ class ProgrammerController extends BaseController
             "powerLevel"     => $programmer->powerLevel,
             "tagLine"        => $programmer->tagLine,
         ];
+    }
+
+    private function handleRequest(Request $request, Programmer $programmer)
+    {
+        $data = json_decode($request->getContent(), true);
+        if ($data === null) {
+            throw new \Exception("Invalid JSON!!!! " . $request->getContent());
+        }
+
+        $apiProperties = array("nickname", "avatarNumber", "tagLine");
+
+        foreach ($apiProperties as $property) {
+            $val = isset($data[$property]) ? $data[$property] : null;
+            $programmer->$property = $val;
+        }
+
+        $programmer->userId = $this->findUserByUsername("weaverryan")->id;
+
+        $this->save($programmer);
     }
 
 }
