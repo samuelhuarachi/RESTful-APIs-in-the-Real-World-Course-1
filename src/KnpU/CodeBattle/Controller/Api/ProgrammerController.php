@@ -30,6 +30,13 @@ class ProgrammerController extends BaseController
 
         $this->handleRequest($request, $programmer);
 
+        $errors = $this->validate($programmer);
+        if (!empty($errors)) {
+            return $this->handleValidationResponse($errors);
+        }
+
+        $this->save($programmer);
+
         $url = $this->generateUrl("api_programmers_show", [
             "nickname" => $programmer->nickname,
         ]);
@@ -56,6 +63,12 @@ class ProgrammerController extends BaseController
 
         $this->handleRequest($request, $programmer);
 
+        $errors = $this->validate($programmer);
+        if (!empty($errors)) {
+            return $this->handleValidationResponse($errors);
+        }
+
+        $this->save($programmer);
         $data = $this->serializeProgrammer($programmer);
 
         $response = new JsonResponse($data, 200);
@@ -142,8 +155,16 @@ class ProgrammerController extends BaseController
         }
 
         $programmer->userId = $this->findUserByUsername("weaverryan")->id;
+    }
 
-        $this->save($programmer);
+    private function handleValidationResponse(array $errors)
+    {
+        $data = [
+            "type" => "validation_error",
+            "title" => "There was a validation error",
+            "errors" => $errors
+        ];
+        return new JsonResponse($data, 400);
     }
 
 }
