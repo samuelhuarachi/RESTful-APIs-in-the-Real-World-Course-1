@@ -47,6 +47,8 @@ class ProgrammerController extends BaseController
 
     public function updateAction(Request $request, $nickname)
     {
+//        throw new \Exception("You coded something wrong! FROM BRAZILLALALA");
+
         $programmer = $this->getProgrammerRepository()
             ->findOneByNickname($nickname);
 
