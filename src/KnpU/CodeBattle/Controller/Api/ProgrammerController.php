@@ -10,6 +10,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProgrammerController extends BaseController
 {
@@ -135,7 +136,9 @@ class ProgrammerController extends BaseController
     {
         $data = json_decode($request->getContent(), true);
         if ($data === null) {
-            throw new \Exception("Invalid JSON!!!! " . $request->getContent());
+            $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
+
+            throw new HttpException(400, "Invalid JSON!!!!");
         }
 
         $isNew = !$programmer->id;

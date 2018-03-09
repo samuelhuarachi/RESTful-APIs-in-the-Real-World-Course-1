@@ -34,6 +34,4 @@ class Programmer
         $this->nickname = $nickname;
         $this->avatarNumber = $avatarNumber;
     }
-
-
 }
