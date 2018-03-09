@@ -47,7 +47,8 @@ class ProgrammerController extends BaseController
             ->findOneByNickname($nickname);
 
         if(!$programmer) {
-            $this->throw404("Oh no! This programmer has deserted! We will send a search party");
+            // $this->throw404("Oh no! This programmer has deserted! We will send a search party");
+            $programmer = new Programmer($nickname);
         }
 
         $this->handleRequest($request, $programmer);
