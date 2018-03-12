@@ -3,6 +3,7 @@
 namespace KnpU\CodeBattle;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use KnpU\CodeBattle\Api\ApiProblem;
 use KnpU\CodeBattle\Api\ApiProblemException;
 use KnpU\CodeBattle\Battle\PowerManager;
@@ -295,11 +296,18 @@ class Application extends SilexApplication
             if (strpos($app['request']->getPathInfo(), '/api') !== 0) {
                 return;
             }
+            if ($app['debug'] && $statusCode == 500) {
+                return;
+            }
 
             if ($e instanceof ApiProblemException) {
                 $apiProblem = $e->getApiProblem();;
             } else {
                 $apiProblem = new ApiProblem($statusCode);
+
+                if ($e instanceof HttpException) {
+                    $apiProblem->set('details', $e->getMessage());
+                }
             }
 
             $data = $apiProblem->toArray();
