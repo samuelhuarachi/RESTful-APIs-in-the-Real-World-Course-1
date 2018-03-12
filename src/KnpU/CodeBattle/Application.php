@@ -3,6 +3,8 @@
 namespace KnpU\CodeBattle;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
+use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use KnpU\CodeBattle\Api\ApiProblem;
 use KnpU\CodeBattle\Api\ApiProblemException;
@@ -209,6 +211,14 @@ class Application extends SilexApplication
 
         $this['api.validator'] = $this->share(function() use ($app) {
             return new ApiValidator($app['validator']);
+        });
+
+        $this['serializer'] = $this->share(function() use ($app) {
+            return SerializerBuilder::create()
+                ->setCacheDir($app['root_dir'].'/cache/serializer')
+                ->setDebug($app['debug'])
+                ->setPropertyNamingStrategy(new IdenticalPropertyNamingStrategy())
+                ->build();
         });
     }
 

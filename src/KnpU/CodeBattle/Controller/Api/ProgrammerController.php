@@ -44,9 +44,9 @@ class ProgrammerController extends BaseController
             "nickname" => $programmer->nickname,
         ]);
 
-        $data = $this->serializeProgrammer($programmer);
+        $json = $this->serialize($programmer);
 
-        $response = new JsonResponse($data, 201);
+        $response = new Response($json, 201);
         $response->headers->set("Location", $url);
 
         return $response;
@@ -72,9 +72,9 @@ class ProgrammerController extends BaseController
         }
 
         $this->save($programmer);
-        $data = $this->serializeProgrammer($programmer);
+        $json = $this->serialize($programmer);
 
-        $response = new JsonResponse($data, 200);
+        $response = new Response($json, 200);
 
         return $response;
     }
@@ -88,9 +88,9 @@ class ProgrammerController extends BaseController
             $this->throw404("Oh no! This programmer has deserted! We'll send a search party");
         }
 
-        $data = $this->serializeProgrammer($programmer);
+        $json = $this->serialize($programmer);
 
-        $response = new JsonResponse($data, 200);
+        $response = new Response($json, 200);
 
         return $response;
     }
@@ -112,25 +112,18 @@ class ProgrammerController extends BaseController
         $programmers = $this->getProgrammerRepository()
             ->findAll();
 
-        $data = ["programmers" => []];
+        $data = ["programmers" => $programmers];
+        $json = $this->serialize($data);
 
-        foreach ($programmers as $programmer) {
-            $data["programmers"][] = $this->serializeProgrammer($programmer);
-        }
-
-        $response = new JsonResponse($data, 200);
+        $response = new Response($json, 200);
 
         return $response;
     }
 
-    private function serializeProgrammer(Programmer $programmer)
+    private function serialize($data)
     {
-        return [
-            "nickname"       => $programmer->nickname,
-            "avatarNumber"   => $programmer->avatarNumber,
-            "powerLevel"     => $programmer->powerLevel,
-            "tagLine"        => $programmer->tagLine,
-        ];
+        return $this->container['serializer']
+                    ->serialize($data, 'json');
     }
 
     private function handleRequest(Request $request, Programmer $programmer)
