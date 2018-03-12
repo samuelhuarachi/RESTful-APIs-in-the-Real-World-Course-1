@@ -67,6 +67,7 @@ Feature: Programmer
     tagLine
     """
     And the "nickname" property should equal "UnitTester"
+    And the "userId" property should not exist
 
   Scenario: GET a non-existent programmer
     When I request "GET /api/programmers/BumbleBee"

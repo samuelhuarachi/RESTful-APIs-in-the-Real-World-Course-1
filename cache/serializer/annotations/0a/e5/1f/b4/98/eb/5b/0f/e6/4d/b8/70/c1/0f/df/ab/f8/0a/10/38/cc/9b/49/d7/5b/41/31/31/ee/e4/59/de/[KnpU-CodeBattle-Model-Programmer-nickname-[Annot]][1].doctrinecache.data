@@ -1,2 +1,2 @@
 0
-a:1:{i:0;O:48:"Symfony\Component\Validator\Constraints\NotBlank":3:{s:7:"message";s:24:"Enter a clever nickname!";s:7:"payload";N;s:6:"groups";a:1:{i:0;s:7:"Default";}}}
+a:2:{i:0;O:48:"Symfony\Component\Validator\Constraints\NotBlank":3:{s:7:"message";s:24:"Enter a clever nickname!";s:7:"payload";N;s:6:"groups";a:1:{i:0;s:7:"Default";}}i:1;O:32:"JMS\Serializer\Annotation\Expose":1:{s:2:"if";N;}}
