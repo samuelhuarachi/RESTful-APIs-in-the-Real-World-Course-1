@@ -68,6 +68,13 @@ Feature: Programmer
     """
     And the "nickname" property should equal "UnitTester"
 
+  Scenario: GET a non-existent programmer
+    When I request "GET /api/programmers/BumbleBee"
+    Then the response status code should be 404
+    And the "Content-Type" header should be "application/problem+json"
+    And the "type" property should equal "about:blank"
+    And the "title" property should equal "Not Found"
+
   Scenario: GET a collection of programmers
     Given the following programmers exist:
       | nickname     | avatarNumber |
